@@ -1,0 +1,2 @@
+/Users/hashirhamid/Projects/merhab/android/app/.cxx/Debug/635z3t26/x86_64/CMakeFiles/edit_cache.dir
+/Users/hashirhamid/Projects/merhab/android/app/.cxx/Debug/635z3t26/x86_64/CMakeFiles/rebuild_cache.dir
