@@ -1,0 +1,2 @@
+/Users/hashirhamid/Projects/merhab/android/app/.cxx/Debug/x275r731/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/hashirhamid/Projects/merhab/android/app/.cxx/Debug/x275r731/armeabi-v7a/CMakeFiles/rebuild_cache.dir

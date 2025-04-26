@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  static const Color primaryColor = Color(0xFF9C89B8);
-  static const Color secondaryColor = Color(0xFF7C6A95);
+  static const Color primaryLavenderColor = Color(0xFFC9A2DD);
+  static const Color secondaryLavenderColor = Color(0xFFDCC5F2);
+  static const Color darkLavenderColor = Color.fromARGB(255, 164, 121, 186);
+  static const Color primaryGreenColor = Color(0xFFA3E170);
+  static const Color secondaryGreenColor = Color(0xFF4DAA41);
+  static const Color darkGreenColor = Color(0xFF3C3929);
   static const Color backgroundColor = Colors.white;
   static const Color textColor = Colors.black87;
   static const Color greyTextColor = Colors.grey;
   static const Color errorColor = Color(0xFFDC3545);
 
   static ThemeData lightTheme = ThemeData(
-    primaryColor: primaryColor,
+    primaryColor: primaryLavenderColor,
+    fontFamily: "Poppins",
     scaffoldBackgroundColor: backgroundColor,
     colorScheme: const ColorScheme.light(
-      primary: primaryColor,
-      secondary: secondaryColor,
+      primary: primaryLavenderColor,
+      secondary: secondaryLavenderColor,
       error: errorColor,
     ),
 
@@ -57,7 +62,7 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: primaryColor),
+        borderSide: const BorderSide(color: primaryLavenderColor),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -70,7 +75,7 @@ class AppTheme {
     // Elevated Button Theme
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: primaryColor,
+        backgroundColor: primaryLavenderColor,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(
@@ -83,7 +88,7 @@ class AppTheme {
     // Text Button Theme
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: primaryColor,
+        foregroundColor: primaryLavenderColor,
         padding: const EdgeInsets.symmetric(horizontal: 8),
       ),
     ),

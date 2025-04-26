@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:get/utils.dart';
+import 'package:merhab/controllers/auth_controller.dart';
 import 'package:merhab/theme/themes.dart';
-import 'package:merhab/screens/home/home_layout.dart';
+import 'package:merhab/screens/home_layout.dart';
 
 class SetupProfileScreen extends StatefulWidget {
   const SetupProfileScreen({Key? key}) : super(key: key);
@@ -29,6 +32,18 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
     'AB+',
     'AB-'
   ];
+
+  @override
+  void initState() {
+    final user = Get.find<AuthController>().userData;
+    _nationalityController.text = user.nationality ?? "";
+    _ageController.text = user.age ?? "";
+    _emergencyContactController.text = user.emergencyContact ?? "";
+    _relativeController.text = user.relative ?? "";
+    _selectedGender = user.gender ?? "Male";
+    _selectedBloodType = user.bloodType ?? "A+";
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -66,7 +81,7 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
                   value: option,
                   groupValue: selectedValue,
                   onChanged: (value) => onChanged(value!),
-                  activeColor: AppTheme.primaryColor,
+                  activeColor: AppTheme.primaryGreenColor,
                 ),
                 Text(
                   option,
@@ -86,13 +101,17 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Theme.of(context).iconTheme.color,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
+        leading: SizedBox.shrink(),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Get.to(() => HomeLayout());
+              },
+              child: Text(
+                "Skip",
+                style: TextStyle(color: AppTheme.primaryLavenderColor),
+              )),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -106,7 +125,7 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.textColor,
+                  color: AppTheme.primaryGreenColor,
                 ),
               ),
               const SizedBox(height: 8),
@@ -114,8 +133,8 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
                 'Please fill in your details',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppTheme.greyTextColor,
-                    ),
+                    color: AppTheme.primaryLavenderColor,
+                    fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 32),
 
@@ -125,7 +144,10 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Nationality',
                   hintText: 'Enter your nationality',
-                  prefixIcon: Icon(Icons.public),
+                  prefixIcon: Icon(
+                    Icons.public,
+                    color: AppTheme.primaryGreenColor,
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -147,7 +169,8 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Age',
                   hintText: 'Enter your age',
-                  prefixIcon: Icon(Icons.calendar_today),
+                  prefixIcon: Icon(Icons.calendar_today,
+                      color: AppTheme.primaryGreenColor),
                 ),
               ),
               const SizedBox(height: 24),
@@ -169,7 +192,8 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Emergency Contact',
                   hintText: 'Enter emergency contact number',
-                  prefixIcon: Icon(Icons.emergency),
+                  prefixIcon:
+                      Icon(Icons.emergency, color: AppTheme.primaryGreenColor),
                 ),
               ),
               const SizedBox(height: 24),
@@ -180,33 +204,47 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Relative',
                   hintText: 'Enter relative name',
-                  prefixIcon: Icon(Icons.person_outline),
+                  prefixIcon: Icon(Icons.person_outline,
+                      color: AppTheme.primaryGreenColor),
                 ),
               ),
               const SizedBox(height: 32),
 
               // Submit Button
-              ElevatedButton(
-                onPressed: () {
-                  // Basic validation
-                  // if (_nationalityController.text.isNotEmpty &&
-                  //     _ageController.text.isNotEmpty &&
-                  //     _emergencyContactController.text.isNotEmpty &&
-                  //     _relativeController.text.isNotEmpty) {
-                  // Navigate to home layout
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const HomeLayout(),
-                    ),
-                    (route) => false, // Remove all previous routes
-                  );
-                  // }
-                },
-                child: Text(
-                  'Submit',
-                  style: Theme.of(context).textTheme.labelLarge,
-                ),
+
+              Obx(
+                () => Get.find<AuthController>().isLoadingProfile.value
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : ElevatedButton(
+                        onPressed: () {
+                          if (_nationalityController.text.isNotEmpty &&
+                              _ageController.text.isNotEmpty &&
+                              _emergencyContactController.text.isNotEmpty &&
+                              _relativeController.text.isNotEmpty) {
+                            Get.find<AuthController>().setupProfile(
+                                _nationalityController.text,
+                                _selectedGender,
+                                _ageController.text,
+                                _selectedBloodType,
+                                _emergencyContactController.text,
+                                _relativeController.text);
+                          } else {
+                            Get.snackbar(
+                              'Error',
+                              'Please fill in all fields',
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white,
+                              duration: const Duration(seconds: 2),
+                            );
+                          }
+                        },
+                        child: Text(
+                          'Submit',
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+                      ),
               ),
             ],
           ),

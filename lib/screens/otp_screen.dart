@@ -1,14 +1,27 @@
+import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:merhab/controllers/auth_controller.dart';
 import 'package:merhab/theme/themes.dart';
 import 'package:merhab/screens/setup_profile_screen.dart';
 
 class OtpScreen extends StatefulWidget {
   final String email;
+  final String password;
+  final String firstName;
+  final String lastName;
+  final String phoneNumber;
+  final String passportNumber;
 
   const OtpScreen({
     Key? key,
     required this.email,
+    required this.password,
+    required this.firstName,
+    required this.lastName,
+    required this.phoneNumber,
+    required this.passportNumber,
   }) : super(key: key);
 
   @override
@@ -25,6 +38,14 @@ class _OtpScreenState extends State<OtpScreen> {
     4,
     (index) => FocusNode(),
   );
+
+  @override
+  void initState() {
+    EmailOTP.sendOTP(
+      email: widget.email,
+    );
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -144,12 +165,31 @@ class _OtpScreenState extends State<OtpScreen> {
                 onPressed: () {
                   final otp = _controllers.map((c) => c.text).join();
                   if (otp.length == 4) {
-                    // Navigate to profile setup
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SetupProfileScreen(),
-                      ),
+                    if (EmailOTP.verifyOTP(otp: otp)) {
+                      Get.find<AuthController>().signup(
+                        widget.email,
+                        widget.password,
+                        widget.firstName,
+                        widget.lastName,
+                        widget.phoneNumber,
+                        widget.passportNumber,
+                      );
+                    } else {
+                      Get.snackbar(
+                        'Error',
+                        'Invalid OTP',
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Colors.red,
+                        colorText: Colors.white,
+                      );
+                    }
+                  } else {
+                    Get.snackbar(
+                      'Error',
+                      'Please enter a valid OTP',
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: Colors.red,
+                      colorText: Colors.white,
                     );
                   }
                 },
