@@ -4,8 +4,11 @@ import 'package:merhab/screens/about_saudi_screen.dart';
 import 'package:merhab/screens/activities_screen.dart';
 import 'package:merhab/screens/emergency_screen.dart';
 import 'package:merhab/screens/market_screen.dart';
+import 'package:merhab/screens/plan_trip_screens/create_activity_screen.dart';
+import 'package:merhab/screens/plan_trip_screens/trip_plan_widgets/trip_detail.dart';
 import 'package:merhab/screens/transportation_screen.dart';
 import 'package:merhab/theme/themes.dart';
+import 'package:merhab/utils/app_images.dart';
 import 'package:merhab/utils/banner.dart';
 import 'package:merhab/widgets/item_container_widget.dart';
 
@@ -56,6 +59,33 @@ class HomeScreen extends StatelessWidget {
                     Get.to(() => MarketScreen());
                   }),
             ],
+          ),
+          Center(
+            child: GestureDetector(
+              onTap: () {
+                Get.to(() => TripDetailsScreen());
+              },
+              child: Container(
+              width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                    border:
+                        Border.all(color: const Color.fromARGB(31, 148, 148, 148)),
+                    borderRadius: BorderRadius.circular(15)),
+                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                        height: 100, child: Image.asset(AppImages.travelImage)),
+                       
+                    Text("Show Trips",style: TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.w500
+                    ),)
+                  ],
+                ),
+              ),
+            ),
           ),
           const SizedBox(height: 32),
           Text("Know Before You Go",

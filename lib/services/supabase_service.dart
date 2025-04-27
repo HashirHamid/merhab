@@ -67,6 +67,24 @@ class SupabaseService {
     await _client.from(table).insert(data);
   }
 
+  Future<String> insertDataAndGetId(
+      String table, List<Map<String, dynamic>> data) async {
+    try {
+      final response = await _client.from(table).insert(data).select();
+
+      if (response.isEmpty || response[0]['id'] == null) {
+        throw Exception('Insert failed: No ID returned or response is empty.');
+      }
+
+      final insertedId = response[0]['id'] as String;
+
+      return insertedId;
+    } catch (e) {
+      print('Error inserting data into $table: $e');
+      rethrow; // Optionally rethrow to propagate the error
+    }
+  }
+
   Future<void> updateData(String table, Map<String, dynamic> data,
       String column, dynamic value) async {
     await _client.from(table).update(data).eq(column, value);

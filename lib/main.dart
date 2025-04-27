@@ -5,6 +5,7 @@ import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:merhab/controllers/auth_controller.dart';
 import 'package:merhab/controllers/place_controller.dart';
 import 'package:merhab/controllers/store_controller.dart';
+import 'package:merhab/controllers/trip_plan_controller.dart';
 
 import 'package:merhab/screens/login_screen.dart';
 import 'package:merhab/theme/themes.dart';
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
         Get.put(AuthController());
         Get.put(StoreController());
         Get.put(PlaceController());
+        Get.put(TripPlanController(), permanent: true);
       }),
       home: const LoginScreen(),
       debugShowCheckedModeBanner: false,

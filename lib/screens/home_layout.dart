@@ -4,6 +4,7 @@ import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 import 'package:get/get.dart';
 import 'package:merhab/controllers/auth_controller.dart';
 import 'package:merhab/screens/chat_bot_screen.dart';
+import 'package:merhab/screens/plan_trip_screens/add_trip_screen.dart';
 import 'package:merhab/theme/themes.dart';
 import 'package:merhab/screens/home_screen.dart';
 import 'package:merhab/screens/map_screen.dart';
@@ -64,7 +65,25 @@ class _HomeLayoutState extends State<HomeLayout>
     return Scaffold(
       key: _key,
       endDrawer: AppDrawer(),
-      floatingActionButton: Padding(
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Padding(
+        padding: EdgeInsets.only(bottom: 20),
+        child: FloatingActionButton(
+          
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TripPlanForm(),
+              ),
+            );
+          },
+          backgroundColor: AppTheme.primaryLavenderColor,
+          child: const Icon(Icons.add),
+        ),
+      ),Padding(
         padding: EdgeInsets.only(bottom: 60),
         child: FloatingActionButton(
           onPressed: () {
@@ -78,6 +97,8 @@ class _HomeLayoutState extends State<HomeLayout>
           backgroundColor: AppTheme.primaryLavenderColor,
           child: const Icon(Icons.chat),
         ),
+      ),
+        ],
       ),
       body: SafeArea(
         child: Stack(
