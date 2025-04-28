@@ -19,6 +19,15 @@ class _PlannedTripTileWidgetState extends State<PlannedTripTileWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final List<ActivityModel> tripActivities = widget.activities != null
+        ? widget.activities!
+            .where((activity) => activity.tripId == widget.trip?.id)
+            .toList()
+        : [];
+
+    if (_currentStep >= tripActivities.length) {
+      _currentStep = 0;
+    }
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
       padding: EdgeInsets.all(10),
@@ -109,19 +118,16 @@ class _PlannedTripTileWidgetState extends State<PlannedTripTileWidget> {
             ],
           ),
           SizedBox(height: 24),
-         Stepper(
-              physics:
-                  NeverScrollableScrollPhysics(), // Important for nested scrolling
+          if (tripActivities.isNotEmpty)
+            Stepper(
               currentStep: _currentStep,
               onStepTapped: (step) {
                 setState(() {
-                  if (step >= 0 && step < widget.activities!.length) {
-                    _currentStep = step;
-                  }
+                  _currentStep = step;
                 });
               },
               onStepContinue: () {
-                if (_currentStep < widget.activities!.length - 1) {
+                if (_currentStep < tripActivities.length - 1) {
                   setState(() {
                     _currentStep++;
                   });
@@ -134,29 +140,34 @@ class _PlannedTripTileWidgetState extends State<PlannedTripTileWidget> {
                   });
                 }
               },
-              steps: widget.activities != null
-                  ? widget.activities!
-                      .map((activity) => Step(
-                            title: Text(activity.eventName ?? ""),
-                            content: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                    "Date: ${formatDate(activity.startDate ?? "")}",
-                                    style: TextStyle(fontSize: 16)),
-                                Text("Time: ${activity.startTime ?? ''}",
-                                    style: TextStyle(fontSize: 16)),
-                                Text("Venue: ${activity.venue ?? ''}",
-                                    style: TextStyle(fontSize: 16)),
-                              ],
-                            ),
-                            isActive: _currentStep ==
-                                widget.activities!.indexOf(activity),
-                          ))
-                      .toList()
-                  : [],
-            
-          ),
+              steps: tripActivities.asMap().entries.map((entry) {
+                final int index = entry.key; // 👈 index available
+                final activity = entry.value; // 👈 actual activity object
+
+                return Step(
+                  title: Text(activity.eventName ?? ""),
+                  content: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Date: ${formatDate(activity.startDate ?? "")}",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      Text(
+                        "Time: ${activity.startTime ?? ''}",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      Text(
+                        "Venue: ${activity.venue ?? ''}",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                  isActive: _currentStep ==
+                      index, // ✅ Now you have the correct index!
+                );
+              }).toList(),
+            ),
           SizedBox(height: 24),
           Text(
             'Description:',
