@@ -9,6 +9,7 @@ class TripPlanController extends GetxController {
   RxList<ActivityModel> activities = <ActivityModel>[].obs;
   Rx<TripModel> trip = TripModel().obs;
   RxList<TripModel> tripList = <TripModel>[].obs;
+  RxList<ActivityModel> activitiesList = <ActivityModel>[].obs;
 
   RxBool isLoadingTrips = false.obs;
   RxBool isAddingTrip = false.obs;
@@ -48,6 +49,7 @@ class TripPlanController extends GetxController {
         });
 
         final activityData = activities.map((e) => e.toJson()).toList();
+        print("Activity-------->$activityData");
         await SupabaseService().insertDataAndGetId("Activities", activityData);
       } else {}
     } catch (e) {
@@ -69,7 +71,7 @@ class TripPlanController extends GetxController {
       }
 
       if (activity.isNotEmpty) {
-        activities.value = activityModelFromJson(jsonEncode(activity));
+        activitiesList.value = activityModelFromJson(jsonEncode(activity));
       }
 
       assignActivitiesToPlan();

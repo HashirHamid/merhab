@@ -65,25 +65,7 @@ class _HomeLayoutState extends State<HomeLayout>
     return Scaffold(
       key: _key,
       endDrawer: AppDrawer(),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Padding(
-        padding: EdgeInsets.only(bottom: 20),
-        child: FloatingActionButton(
-          
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TripPlanForm(),
-              ),
-            );
-          },
-          backgroundColor: AppTheme.primaryLavenderColor,
-          child: const Icon(Icons.add),
-        ),
-      ),Padding(
+      floatingActionButton: Padding(
         padding: EdgeInsets.only(bottom: 60),
         child: FloatingActionButton(
           onPressed: () {
@@ -97,8 +79,6 @@ class _HomeLayoutState extends State<HomeLayout>
           backgroundColor: AppTheme.primaryLavenderColor,
           child: const Icon(Icons.chat),
         ),
-      ),
-        ],
       ),
       body: SafeArea(
         child: Stack(

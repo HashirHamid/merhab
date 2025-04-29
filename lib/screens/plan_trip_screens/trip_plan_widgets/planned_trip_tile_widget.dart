@@ -8,185 +8,234 @@ class PlannedTripTileWidget extends StatefulWidget {
   final TripModel? trip;
   final List<ActivityModel>? activities;
 
-  PlannedTripTileWidget({this.trip, this.activities, super.key});
+  const PlannedTripTileWidget({super.key, this.trip, this.activities});
 
   @override
-  _PlannedTripTileWidgetState createState() => _PlannedTripTileWidgetState();
+  State<PlannedTripTileWidget> createState() => _PlannedTripTileWidgetState();
 }
 
 class _PlannedTripTileWidgetState extends State<PlannedTripTileWidget> {
-  int _currentStep = 0;
+  final Map<String, List<ActivityModel>> groupedActivities = {};
+
+  @override
+  void initState() {
+    super.initState();
+    for (ActivityModel activity in widget.activities ?? []) {
+      if (activity.tripId == widget.trip?.id) {
+        final dateKey = formatDate(activity.startDate ?? "");
+        groupedActivities.putIfAbsent(dateKey, () => []);
+        groupedActivities[dateKey]!.add(activity);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final List<ActivityModel> tripActivities = widget.activities != null
-        ? widget.activities!
-            .where((activity) => activity.tripId == widget.trip?.id)
-            .toList()
-        : [];
+    final groupedEntries = groupedActivities.entries.toList();
 
-    if (_currentStep >= tripActivities.length) {
-      _currentStep = 0;
-    }
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      padding: EdgeInsets.all(10),
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.white,
-          border: Border.all(color: Colors.black12),
-          boxShadow: [
-            BoxShadow(
-                color: const Color.fromARGB(160, 224, 224, 224),
-                spreadRadius: 1,
-                blurRadius: 2)
-          ]),
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.white,
+        border: Border.all(color: Colors.black12),
+        boxShadow: [
+          BoxShadow(
+            color: const Color.fromARGB(160, 224, 224, 224),
+            spreadRadius: 1,
+            blurRadius: 2,
+          )
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          Text(
+            widget.trip?.tripName ?? "",
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 20),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.trip?.tripName ?? "",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: 'Start: ',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.primaryLavenderColor,
-                              ),
-                            ),
-                            TextSpan(
-                              text: formatDate(widget.trip?.startDate ?? ""),
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(width: 16),
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: 'End: ',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppTheme.primaryLavenderColor),
-                            ),
-                            TextSpan(
-                              text: formatDate(widget.trip?.endDate ?? ""),
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              // ClipRRect(
-              //   borderRadius: BorderRadius.circular(8),
-              //   child: Image.network(
-              //     'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?fm=jpg',
-              //     width: 170,
-              //     height: 170,
-              //     fit: BoxFit.cover,
-              //   ),
-              // ),
+              Text(
+                formatDateByStyle(
+                  startDate: widget.trip?.startDate,
+                  endDate: widget.trip?.endDate,
+                  style: DateFormatStyle.fullRangeWithDayMonthYear,
+                ),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              )
             ],
           ),
-          SizedBox(height: 24),
-          if (tripActivities.isNotEmpty)
-            Stepper(
-              currentStep: _currentStep,
-              onStepTapped: (step) {
-                setState(() {
-                  _currentStep = step;
-                });
-              },
-              onStepContinue: () {
-                if (_currentStep < tripActivities.length - 1) {
-                  setState(() {
-                    _currentStep++;
-                  });
-                }
-              },
-              onStepCancel: () {
-                if (_currentStep > 0) {
-                  setState(() {
-                    _currentStep--;
-                  });
-                }
-              },
-              steps: tripActivities.asMap().entries.map((entry) {
-                final int index = entry.key; // 👈 index available
-                final activity = entry.value; // 👈 actual activity object
+          const SizedBox(height: 25),
 
-                return Step(
-                  title: Text(activity.eventName ?? ""),
-                  content: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Date: ${formatDate(activity.startDate ?? "")}",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      Text(
-                        "Time: ${activity.startTime ?? ''}",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      Text(
-                        "Venue: ${activity.venue ?? ''}",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
+          ...List.generate(groupedEntries.length, (groupIndex) {
+            final entry = groupedEntries[groupIndex];
+            String date = entry.key;
+            List<ActivityModel> activities = entry.value;
+            final isLastGroup = groupIndex == groupedEntries.length - 1;
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  width: double.infinity,
+                  child: Text(
+                    formatDateByStyle(
+                      startDate: date,
+                      style: DateFormatStyle.singleDayWithComma,
+                    ),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                   ),
-                  isActive: _currentStep ==
-                      index, // ✅ Now you have the correct index!
-                );
-              }).toList(),
-            ),
-          SizedBox(height: 24),
-          Text(
+                ),
+                ...List.generate(activities.length, (index) {
+                  final activity = activities[index];
+                  final isLastActivity = index == activities.length - 1;
+
+                  return SizedBox(
+                    width: double.infinity,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                 formatTimeWithAmPm(parseTimeOfDayString(activity.startTime??"")),
+                                  style: const TextStyle(
+                                      fontSize: 14, fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.left,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  "${activity.timezone}",
+                                  style: const TextStyle(
+                                      fontSize: 14, fontWeight: FontWeight.normal),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              width: 3,
+                              height: 12,
+                              color: index == 0 ? Colors.transparent : Colors.grey,
+                            ),
+                            Container(
+                              width: 30,
+                              height: 30,
+                              padding: const EdgeInsets.all(5),
+                              decoration: const BoxDecoration(
+                                color: AppTheme.primaryLavenderColor,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Image.asset(
+                                color: Colors.black,
+                                getActivityImagePath(activity.activityType ?? ""),
+                              ),
+                            ),
+                            Container(
+                              width: 3,
+                              height: 50,
+                              color: isLastActivity
+                                  ? (isLastGroup ? Colors.transparent : Colors.grey)
+                                  : Colors.grey,
+                            ),
+                          ],
+                        ),
+                        Expanded(
+                          flex: 4,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8, bottom: 20),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    activity.eventName ?? "",
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    activity.venue ?? '',
+                                    style: const TextStyle(fontSize: 14),
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ],
+            );
+          }),
+
+          const SizedBox(height: 10),
+          const Text(
             'Description:',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             widget.trip?.tripDescription ?? "No description available.",
-            style: TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16),
           ),
-          SizedBox(height: 24),
-          Text(
-            'Traveller Details:',
+          const SizedBox(height: 24),
+          const Text(
+            'Traveler Details:',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
-            widget.trip?.tripName ?? "Unknown Traveller",
-            style: TextStyle(fontSize: 16),
+            widget.trip?.travelerName ?? "Unknown",
+            style: const TextStyle(fontSize: 16),
+          ),
+          const Text(
+            'Traveler Contact No.:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            widget.trip?.travelerContact ?? "Unknown",
+            style: const TextStyle(fontSize: 16),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _tripDateRow(String label, String? date) {
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: '$label: ',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.primaryLavenderColor,
+            ),
+          ),
+          TextSpan(
+            text: formatDate(date ?? ""),
+            style: const TextStyle(fontSize: 16),
           ),
         ],
       ),

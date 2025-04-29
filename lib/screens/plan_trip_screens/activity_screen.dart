@@ -6,7 +6,7 @@ import 'package:merhab/utils/app_images.dart';
 
 class ActivityListScreen extends StatelessWidget {
   final Map<String, String> activities = {
-    'Sightseeing Tour': "assets/activities.png" ,//AppImages.sightSeeing,
+    'Sightseeing Tour': AppImages.sightSeeing,
     'Nature Hike/Adventure Trekking': AppImages.hikingImage,
     'Cultural Experiences': AppImages.cultureImage,
     'Beach Day/Water Sports': AppImages.beachImage,
@@ -14,14 +14,6 @@ class ActivityListScreen extends StatelessWidget {
     'Wildlife Safari': AppImages.wildLifeImage,
     'Sunset/Sunrise Viewing': AppImages.sunsetImage,
   };
-
-  // Navigate to the Activity Detail Screen
-  // void _navigateToActivityDetail(BuildContext context) {
-  //   Navigator.push(
-  //     context,
-  //    // MaterialPageRoute(builder: (context) => ActivityDetailScreen()),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
