@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:merhab/controllers/trip_plan_controller.dart';
-import 'package:merhab/screens/plan_trip_screens/add_trip_screen.dart';
+import 'package:merhab/models/trip_plan_model/trip_model.dart';
+import 'package:merhab/screens/plan_trip_screens/activity_screen.dart';
+import 'package:merhab/screens/plan_trip_screens/create_activity_screen.dart';
 import 'package:merhab/screens/plan_trip_screens/trip_plan_widgets/planned_trip_tile_widget.dart';
 import 'package:merhab/theme/themes.dart';
 
 class TripDetailsScreen extends StatefulWidget {
+  TripDetailsScreen({this.trip});
+
+  TripModel? trip;
+
   @override
   _TripDetailsScreenState createState() => _TripDetailsScreenState();
 }
@@ -16,9 +22,10 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await tripController.getTableData("Trip");
-    });
+
+    // WidgetsBinding.instance.addPostFrameCallback((_)async{
+    //     await tripController.getTableData("Trip");
+    // });
   }
 
   @override
@@ -29,7 +36,9 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => TripPlanForm(),
+              builder: (context) => ActivityListScreen(
+                tripId: widget.trip?.id,
+              ),
             ),
           );
         },
@@ -42,21 +51,16 @@ class _TripDetailsScreenState extends State<TripDetailsScreen> {
         child: Obx(() {
           if (tripController.isLoadingTrips.value) {
             return Center(child: CircularProgressIndicator());
-          }
-          else if(tripController.tripList.isEmpty){
-            return Center(child: Text("No Trips Created Yet."),);
+          } else if (tripController.tripList.isEmpty) {
+            return Center(
+              child: Text("No Trips Created Yet."),
+            );
           }
 
           return SingleChildScrollView(
-            child: Column(
-              children: tripController.tripList.map((trip) {
-                return PlannedTripTileWidget(
-                  trip: trip,
-                  activities: tripController.activitiesList,
-                );
-              }).toList(),
-            ),
-          );
+              child: PlannedTripTileWidget(
+            trip: widget.trip,
+          ));
         }),
       ),
     );

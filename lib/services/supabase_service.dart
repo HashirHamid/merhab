@@ -63,6 +63,17 @@ class SupabaseService {
     return response;
   }
 
+  Future<Map<String, dynamic>?> getDataById(String table, String itemId) async {
+    final response = await _client
+        .from(table)
+        .select()
+        .eq('id', itemId)
+        .limit(1)
+        .maybeSingle();
+
+    return response;
+  }
+
   Future<void> insertData(String table, Map<String, dynamic> data) async {
     await _client.from(table).insert(data);
   }

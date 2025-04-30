@@ -13,6 +13,7 @@ class TripPlanController extends GetxController {
 
   RxBool isLoadingTrips = false.obs;
   RxBool isAddingTrip = false.obs;
+  RxBool isLoadingActivities = false.obs;
 
   void addActivity(ActivityModel activity) {
     activities.add(activity);
@@ -43,15 +44,42 @@ class TripPlanController extends GetxController {
 
       final id = await SupabaseService().insertDataAndGetId("Trip", [data]);
 
-      if (id != null && id.isNotEmpty) {
-        activities.forEach((e) {
-          e.tripId = id;
-        });
+      if (activities.isNotEmpty) {
+        if (id != null && id.isNotEmpty) {
+          activities.forEach((e) {
+            e.tripId = id;
+          });
 
-        final activityData = activities.map((e) => e.toJson()).toList();
-        print("Activity-------->$activityData");
-        await SupabaseService().insertDataAndGetId("Activities", activityData);
-      } else {}
+          final activityData = activities.map((e) => e.toJson()).toList();
+          await SupabaseService()
+              .insertDataAndGetId("Activities", activityData);
+          activities.clear();
+        } else {}
+      }
+    } catch (e) {
+      print("An error occurred while creating the trip: $e");
+    } finally {
+      isAddingTrip.value = false;
+    }
+  }
+
+  Future<void> createActivity(ActivityModel activity) async {
+    try {
+      isAddingTrip.value = true;
+
+      final data = activity.toJson();
+      final id =
+          await SupabaseService().insertDataAndGetId("Activities", [data]);
+      if (id.isNotEmpty) {
+        final data = await SupabaseService().getDataById("Activities", id);
+        if (data != null) {
+          print("Hello--------${data}");
+          final activityData =
+              ActivityModel.fromJson(jsonDecode(jsonEncode(data)));
+          activitiesList.add(activityData);
+          activitiesList.refresh();
+        }
+      }
     } catch (e) {
       print("An error occurred while creating the trip: $e");
     } finally {

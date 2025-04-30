@@ -5,6 +5,10 @@ import 'package:merhab/screens/plan_trip_screens/create_activity_screen.dart';
 import 'package:merhab/utils/app_images.dart';
 
 class ActivityListScreen extends StatelessWidget {
+
+  ActivityListScreen({this.tripId});
+String? tripId;
+
   final Map<String, String> activities = {
     'Sightseeing Tour': AppImages.sightSeeing,
     'Nature Hike/Adventure Trekking': AppImages.hikingImage,
@@ -37,7 +41,7 @@ class ActivityListScreen extends StatelessWidget {
               ),
               subtitle: Text('Tap to add activity details'),
               onTap:(){
-                Get.to(()=> ActivityFormScreen(activityName: placeName,));
+                Get.to(()=> ActivityFormScreen(activityName: placeName,tripId: tripId,));
               },
             ),
           );

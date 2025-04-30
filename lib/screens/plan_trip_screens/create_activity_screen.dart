@@ -5,8 +5,9 @@ import 'package:merhab/models/trip_plan_model/activity_model.dart';
 import 'package:merhab/screens/plan_trip_screens/trip_plan_widgets/activity_timezone.dart';
 
 class ActivityFormScreen extends StatefulWidget {
-  const ActivityFormScreen({this.activityName});
+  const ActivityFormScreen({this.activityName, this.tripId});
   final String? activityName;
+  final String? tripId;
 
   @override
   _ActivityFormScreenState createState() => _ActivityFormScreenState();
@@ -111,17 +112,32 @@ class _ActivityFormScreenState extends State<ActivityFormScreen> {
   void _saveActivity() {
     if (!_validateInputs()) return;
 
-    tripPlanController.addActivity(ActivityModel(
-      activityType: _activityTypeController.text,
-      eventName: _eventNameController.text,
-      venue: _venueController.text,
-      address: _addressController.text,
-      startDate: _startDate.toString(),
-      endDate: _endDate.toString(),
-      startTime: _startTime.toString(),
-      endTime: _endTime .toString(),
-      timezone: _timezoneController,
-    ));
+    if (widget.tripId == null) {
+      tripPlanController.addActivity(ActivityModel(
+        activityType: _activityTypeController.text,
+        eventName: _eventNameController.text,
+        venue: _venueController.text,
+        address: _addressController.text,
+        startDate: _startDate.toString(),
+        endDate: _endDate.toString(),
+        startTime: _startTime.toString(),
+        endTime: _endTime.toString(),
+        timezone: _timezoneController,
+      ));
+    } else {
+      tripPlanController.createActivity(ActivityModel(
+        tripId: widget.tripId,
+        activityType: _activityTypeController.text,
+        eventName: _eventNameController.text,
+        venue: _venueController.text,
+        address: _addressController.text,
+        startDate: _startDate.toString(),
+        endDate: _endDate.toString(),
+        startTime: _startTime.toString(),
+        endTime: _endTime.toString(),
+        timezone: _timezoneController,
+      ));
+    }
 
     clearActivityData();
     _showSnackbar("Activity Saved Successfully");
@@ -169,6 +185,7 @@ class _ActivityFormScreenState extends State<ActivityFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("Here is the data-------->${widget.tripId}");
     return Scaffold(
       appBar: AppBar(title: Text("Create Activity")),
       body: Padding(
