@@ -50,6 +50,24 @@ class SupabaseService {
     }
   }
 
+  Future<List<Map<String, dynamic>>> getItemsByField(
+      String table, String field, dynamic value) async {
+    try {
+      final response = await _client
+          .from(table)
+          .select()
+          .eq(field, value);
+
+      return List<Map<String, dynamic>>.from(response);
+    } on PostgrestException catch (e) {
+      print('Supabase Postgrest error: ${e.message}');
+      return [];
+    } catch (e) {
+      print('Unexpected error: $e');
+      return [];
+    }
+  }
+
   Future<void> signOut() async {
     await _client.auth.signOut();
   }

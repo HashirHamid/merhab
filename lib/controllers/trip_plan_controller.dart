@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
+import 'package:merhab/controllers/auth_controller.dart';
 import 'package:merhab/models/trip_plan_model/activity_model.dart';
 import 'package:merhab/models/trip_plan_model/trip_model.dart';
 import 'package:merhab/services/supabase_service.dart';
@@ -39,7 +40,8 @@ class TripPlanController extends GetxController {
         'end_date': trip.value.endDate,
         'trip_description': trip.value.tripDescription,
         "traveler_name": trip.value.travelerName,
-        "traveler_contact": trip.value.travelerContact
+        "traveler_contact": trip.value.travelerContact,
+        "user_id": Get.find<AuthController>().userData.userId
       };
 
       final id = await SupabaseService().insertDataAndGetId("Trip", [data]);
@@ -73,7 +75,6 @@ class TripPlanController extends GetxController {
       if (id.isNotEmpty) {
         final data = await SupabaseService().getDataById("Activities", id);
         if (data != null) {
-          print("Hello--------${data}");
           final activityData =
               ActivityModel.fromJson(jsonDecode(jsonEncode(data)));
           activitiesList.add(activityData);
@@ -90,8 +91,9 @@ class TripPlanController extends GetxController {
   Future<void> getTableData(String tableName) async {
     try {
       isLoadingTrips.value = true;
-
-      final trip = await SupabaseService().getData(tableName);
+      final trip = await SupabaseService().getItemsByField(
+          tableName, "user_id", Get.find<AuthController>().userData.userId);
+      //final trip = await SupabaseService().getData(tableName);
       final activity = await SupabaseService().getData('Activities');
 
       if (trip.isNotEmpty) {
