@@ -1,6 +1,8 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:merhab/screens/plan_trip_screens/trip_plan_widgets/trip_detail.dart';
+import 'package:merhab/screens/plan_trip_screens/triplist_screen.dart';
 import 'package:merhab/theme/themes.dart';
 
 class TravelBanner extends StatefulWidget {
@@ -125,6 +127,9 @@ class _TravelBannerState extends State<TravelBanner>
           SizedBox(height: 30), // Reduced spacing
           // Start Planning button with subtle tap animation
           GestureDetector(
+            onTap: (){
+              Get.to(() => TriplistScreen());
+            },
             onTapDown: (_) {
               setState(() {
                 _isButtonHovered = true;

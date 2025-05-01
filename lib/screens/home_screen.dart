@@ -57,6 +57,7 @@ class HomeScreen extends StatelessWidget {
                   }),
             ],
           ),
+         
           const SizedBox(height: 32),
           Text("Know Before You Go",
               style: TextStyle(

@@ -4,6 +4,7 @@ import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 import 'package:get/get.dart';
 import 'package:merhab/controllers/auth_controller.dart';
 import 'package:merhab/screens/chat_bot_screen.dart';
+import 'package:merhab/screens/plan_trip_screens/add_trip_screen.dart';
 import 'package:merhab/theme/themes.dart';
 import 'package:merhab/screens/home_screen.dart';
 import 'package:merhab/screens/map_screen.dart';

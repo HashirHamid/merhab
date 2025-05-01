@@ -45,6 +45,7 @@ dependencies:
   webview_flutter: ^4.11.0
   mapbox_maps_flutter: ^2.7.0
   mapbox_search: ^4.3.1
+  intl: ^0.20.2
   
 
 dev_dependencies:
