@@ -23,6 +23,7 @@ class TripModel {
   List<ActivityModel>? activities;
   String? travelerName;
   String? travelerContact;
+  String? userId;
 
   TripModel(
       {this.id,
@@ -34,7 +35,8 @@ class TripModel {
       this.tripDestination,
       this.activities,
       this.travelerName,
-      this.travelerContact});
+      this.travelerContact,
+      this.userId});
 
   TripModel copyWith(
           {String? id,
@@ -44,6 +46,7 @@ class TripModel {
           String? endDate,
           String? tripDescription,
           List<ActivityModel>? activities,
+          String? userId,
           String? tripDestination}) =>
       TripModel(
           id: id ?? this.id,
@@ -53,6 +56,7 @@ class TripModel {
           endDate: endDate ?? this.endDate,
           tripDescription: tripDescription ?? this.tripDescription,
           tripDestination: tripDestination ?? this.tripDestination,
+          userId: userId ?? this.userId,
           activities: activities ?? this.activities);
 
   factory TripModel.fromJson(Map<String, dynamic> json,
@@ -67,6 +71,7 @@ class TripModel {
           tripDestination: json["trip_destination"],
           travelerName: json['traveler_name'],
           travelerContact: json['traveler_contact'],
+          userId: json['user_id'],
           activities: activities != null
               ? activities.map((e) => ActivityModel.fromJson(e)).toList()
               : []);
@@ -82,6 +87,7 @@ class TripModel {
         "trip_description": tripDescription,
         "trip_destination": tripDestination,
         "traveler_name": travelerName,
-        "traveler_contact": travelerContact
+        "traveler_contact": travelerContact,
+        "user_id": userId
       };
 }
