@@ -5,9 +5,8 @@ import 'package:merhab/screens/plan_trip_screens/create_activity_screen.dart';
 import 'package:merhab/utils/app_images.dart';
 
 class ActivityListScreen extends StatelessWidget {
-
   ActivityListScreen({this.tripId});
-String? tripId;
+  String? tripId;
 
   final Map<String, String> activities = {
     'Sightseeing Tour': AppImages.sightSeeing,
@@ -24,6 +23,12 @@ String? tripId;
     return Scaffold(
       appBar: AppBar(
         title: Text('Select Activity'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Get.back();
+          },
+        ),
       ),
       body: ListView.builder(
         itemCount: activities.length,
@@ -40,8 +45,11 @@ String? tripId;
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600),
               ),
               subtitle: Text('Tap to add activity details'),
-              onTap:(){
-                Get.to(()=> ActivityFormScreen(activityName: placeName,tripId: tripId,));
+              onTap: () {
+                Get.to(() => ActivityFormScreen(
+                      activityName: placeName,
+                      tripId: tripId,
+                    ));
               },
             ),
           );
